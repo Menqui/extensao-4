@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#f3f4f6"/>
+  <path d="M180 115 330 65 470 120 320 175Z" fill="#c7d2fe" stroke="#27364b" stroke-width="4"/>
+  <path d="M180 115v140l140 55V175Z" fill="#a5b4fc" stroke="#27364b" stroke-width="4"/>
+  <path d="M320 175v135l150-55V120Z" fill="#818cf8" stroke="#27364b" stroke-width="4"/>
+  <text x="285" y="55" font-family="sans-serif" font-size="24" fill="#111827">2 cm × 3 cm × 4 cm</text>
+  <text x="200" y="330" font-family="sans-serif" font-size="20" fill="#374151">Ilustração fictícia para desenvolvimento</text>
+</svg>

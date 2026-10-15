@@ -1,0 +1,35 @@
+@base = http://localhost:8000/api/v1
+
+### Saúde e prontidão
+GET {{base}}/saude
+Accept: application/json
+
+###
+GET {{base}}/pronto
+Accept: application/json
+
+### Filtros disponíveis
+GET {{base}}/meta/filtros
+Accept: application/json
+
+### Listagem, filtros combinados e paginação
+GET {{base}}/questoes?ano=2022&ano=2023&area=matematica&assunto=geometria-plana&page=1&page_size=10
+Accept: application/json
+
+### Questão fictícia de demonstração com id 1
+GET {{base}}/questoes/1
+Accept: application/json
+
+### Conferir resposta
+POST {{base}}/questoes/1/responder
+Content-Type: application/json
+
+{"alternativa":"C"}
+
+### Gabarito sob demanda
+GET {{base}}/questoes/1/gabarito
+Accept: application/json
+
+### Parâmetro inválido (esperado: 422)
+GET {{base}}/questoes?page_size=51
+Accept: application/json

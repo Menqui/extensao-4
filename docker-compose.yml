@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: explorador
+      POSTGRES_USER: explorador
+      POSTGRES_PASSWORD: explorador_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U explorador -d explorador"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  seed:
+    build: .
+    environment:
+      ENV: dev
+      DATABASE_URL: postgresql+psycopg://explorador:explorador_dev@db:5432/explorador
+      DATASET_VERSION: 2026-10-12.1
+    command: ["sh", "-c", "alembic upgrade head && python -m scripts.import_data --file data/questoes/exemplo.json"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build: .
+    environment:
+      ENV: dev
+      DATABASE_URL: postgresql+psycopg://explorador:explorador_dev@db:5432/explorador
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      STATIC_BASE_URL: http://localhost:8000
+      MEDIA_DIR: /app/data/imagens
+      DATASET_VERSION: 2026-10-12.1
+      AUTO_CREATE_TABLES: "false"
+    ports:
+      - "8000:8000"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://localhost:8000/api/v1/saude', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
