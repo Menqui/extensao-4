@@ -1,0 +1,888 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Explorador ENEM — especificação provisória para o frontend",
+    "version": "0.1.0-provisorio",
+    "description": "Rascunho derivado de CONTRATO_API.md, preparado antes do backend para geração de tipos e desenvolvimento com MSW. NÃO é a especificação definitiva gerada pelo backend. Nenhum endpoint funcional novo foi adicionado. Confirmar os tipos, a obrigatoriedade dos campos e as respostas com a equipe do backend antes da integração."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Mesma origem no desenvolvimento com MSW; os caminhos já incluem /api/v1."
+    }
+  ],
+  "security": [],
+  "paths": {
+    "/api/v1/meta/filtros": {
+      "get": {
+        "operationId": "obterFiltros",
+        "summary": "Consultar opções de filtros disponíveis.",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FiltrosDisponiveis"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
+          },
+          "422": {
+            "$ref": "#/components/responses/Erro422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Erro429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    },
+    "/api/v1/questoes": {
+      "get": {
+        "operationId": "listarQuestoes",
+        "summary": "Listar questões sem gabarito.",
+        "description": "E entre tipos de filtro; OU entre valores do mesmo filtro. Valores repetidos são serializados repetindo o parâmetro.",
+        "parameters": [
+          {
+            "name": "ano",
+            "in": "query",
+            "required": false,
+            "description": "Anos; repetir o parâmetro para selecionar vários valores.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "area",
+            "in": "query",
+            "required": false,
+            "description": "IDs das áreas; parâmetro repetível.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "assunto",
+            "in": "query",
+            "required": false,
+            "description": "Assunto principal ou secundário; parâmetro repetível.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "aplicacao",
+            "in": "query",
+            "required": false,
+            "description": "IDs das aplicações; parâmetro repetível.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "incluir_anuladas",
+            "in": "query",
+            "required": false,
+            "description": "Incluir questões anuladas. Sua representação e comportamento de resposta continuam pendentes no contrato humano.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "ordem",
+            "in": "query",
+            "required": false,
+            "description": "Ordenação da lista.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ano_desc",
+                "ano_asc",
+                "aleatoria"
+              ],
+              "default": "ano_desc"
+            }
+          },
+          {
+            "name": "semente",
+            "in": "query",
+            "required": false,
+            "description": "Semente usada com ordem aleatória para manter a paginação estável.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Página solicitada.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "description": "Quantidade de questões por página.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListaQuestoes"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
+          },
+          "422": {
+            "$ref": "#/components/responses/Erro422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Erro429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    },
+    "/api/v1/questoes/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Identificador da questão."
+        }
+      ],
+      "get": {
+        "operationId": "obterQuestao",
+        "summary": "Consultar uma questão sem gabarito.",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Questao"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
+          },
+          "422": {
+            "$ref": "#/components/responses/Erro422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Erro429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    },
+    "/api/v1/questoes/{id}/responder": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Identificador da questão."
+        }
+      ],
+      "post": {
+        "operationId": "responderQuestao",
+        "summary": "Conferir uma resposta sem registrar histórico do usuário.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoResposta"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultadoResposta"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
+          },
+          "422": {
+            "$ref": "#/components/responses/Erro422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Erro429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    },
+    "/api/v1/questoes/{id}/gabarito": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Identificador da questão."
+        }
+      ],
+      "get": {
+        "operationId": "obterGabarito",
+        "summary": "Consultar o gabarito.",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gabarito"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
+          },
+          "422": {
+            "$ref": "#/components/responses/Erro422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Erro429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    },
+    "/api/v1/questoes/{id}/resolucao": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Identificador da questão."
+        }
+      ],
+      "get": {
+        "operationId": "obterResolucao",
+        "summary": "Consultar resolução comentada (pós-MVP).",
+        "description": "No MVP pode retornar 404 RESOLUCAO_INDISPONIVEL.",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resolucao"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
+          },
+          "422": {
+            "$ref": "#/components/responses/Erro422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Erro429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    },
+    "/api/v1/saude": {
+      "get": {
+        "operationId": "consultarSaude",
+        "summary": "Verificar se o processo está vivo.",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Saude"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          }
+        }
+      }
+    },
+    "/api/v1/pronto": {
+      "get": {
+        "operationId": "consultarProntidao",
+        "summary": "Verificar a disponibilidade do banco.",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prontidao"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Erro500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Erro503"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OpcaoFiltro": {
+        "type": "object",
+        "required": [
+          "id",
+          "nome"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuntoFiltro": {
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "area_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "area_id": {
+            "type": "string"
+          }
+        }
+      },
+      "FiltrosDisponiveis": {
+        "type": "object",
+        "required": [
+          "dataset_version",
+          "anos",
+          "areas",
+          "assuntos",
+          "aplicacoes"
+        ],
+        "properties": {
+          "dataset_version": {
+            "type": "string"
+          },
+          "anos": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpcaoFiltro"
+            }
+          },
+          "assuntos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuntoFiltro"
+            }
+          },
+          "aplicacoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpcaoFiltro"
+            }
+          }
+        }
+      },
+      "AssuntoQuestao": {
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "principal"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "principal": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MidiaQuestao": {
+        "type": "object",
+        "required": [
+          "posicao",
+          "url",
+          "alt",
+          "largura",
+          "altura"
+        ],
+        "properties": {
+          "posicao": {
+            "type": "string",
+            "enum": [
+              "enunciado",
+              "alternativa_a",
+              "alternativa_b",
+              "alternativa_c",
+              "alternativa_d",
+              "alternativa_e"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL absoluta da mídia."
+          },
+          "alt": {
+            "type": "string"
+          },
+          "largura": {
+            "type": "integer"
+          },
+          "altura": {
+            "type": "integer"
+          }
+        }
+      },
+      "Alternativa": {
+        "type": "string",
+        "enum": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ]
+      },
+      "Alternativas": {
+        "type": "object",
+        "required": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "properties": {
+          "A": {
+            "type": "string",
+            "description": "Markdown com LaTeX; pode estar vazio quando a alternativa for uma imagem."
+          },
+          "B": {
+            "type": "string",
+            "description": "Markdown com LaTeX; pode estar vazio quando a alternativa for uma imagem."
+          },
+          "C": {
+            "type": "string",
+            "description": "Markdown com LaTeX; pode estar vazio quando a alternativa for uma imagem."
+          },
+          "D": {
+            "type": "string",
+            "description": "Markdown com LaTeX; pode estar vazio quando a alternativa for uma imagem."
+          },
+          "E": {
+            "type": "string",
+            "description": "Markdown com LaTeX; pode estar vazio quando a alternativa for uma imagem."
+          }
+        }
+      },
+      "Questao": {
+        "type": "object",
+        "description": "Questão sem gabarito. Tipos e obrigatoriedade deduzidos do contrato humano; confirmar com o backend.",
+        "required": [
+          "id",
+          "ano",
+          "aplicacao",
+          "prova",
+          "numero_original",
+          "area",
+          "assuntos",
+          "enunciado",
+          "midias",
+          "alternativas"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "ano": {
+            "type": "integer"
+          },
+          "aplicacao": {
+            "$ref": "#/components/schemas/OpcaoFiltro"
+          },
+          "prova": {
+            "type": "string"
+          },
+          "numero_original": {
+            "type": "integer"
+          },
+          "area": {
+            "$ref": "#/components/schemas/OpcaoFiltro"
+          },
+          "assuntos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuntoQuestao"
+            }
+          },
+          "enunciado": {
+            "type": "string",
+            "description": "Markdown com LaTeX delimitado por $...$ ou $$...$$."
+          },
+          "midias": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MidiaQuestao"
+            }
+          },
+          "alternativas": {
+            "$ref": "#/components/schemas/Alternativas"
+          },
+          "fonte_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link da fonte quando disponível; opcional neste rascunho, conforme o PRD. Confirmar na especificação definitiva."
+          }
+        }
+      },
+      "ListaQuestoes": {
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "page_size",
+          "total_paginas",
+          "itens"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "total_paginas": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Questao"
+            }
+          }
+        }
+      },
+      "PedidoResposta": {
+        "type": "object",
+        "required": [
+          "alternativa"
+        ],
+        "properties": {
+          "alternativa": {
+            "$ref": "#/components/schemas/Alternativa"
+          }
+        }
+      },
+      "ResultadoResposta": {
+        "type": "object",
+        "required": [
+          "correta",
+          "gabarito",
+          "resolucao_disponivel"
+        ],
+        "properties": {
+          "correta": {
+            "type": "boolean"
+          },
+          "gabarito": {
+            "$ref": "#/components/schemas/Alternativa"
+          },
+          "resolucao_disponivel": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Gabarito": {
+        "type": "object",
+        "required": [
+          "gabarito"
+        ],
+        "properties": {
+          "gabarito": {
+            "$ref": "#/components/schemas/Alternativa"
+          }
+        }
+      },
+      "Resolucao": {
+        "type": "object",
+        "required": [
+          "texto_md",
+          "origem",
+          "selo"
+        ],
+        "properties": {
+          "texto_md": {
+            "type": "string"
+          },
+          "origem": {
+            "type": "string"
+          },
+          "selo": {
+            "type": "string"
+          }
+        }
+      },
+      "ErroApi": {
+        "type": "object",
+        "required": [
+          "erro"
+        ],
+        "properties": {
+          "erro": {
+            "type": "object",
+            "required": [
+              "codigo",
+              "mensagem",
+              "detalhes"
+            ],
+            "properties": {
+              "codigo": {
+                "type": "string"
+              },
+              "mensagem": {
+                "type": "string"
+              },
+              "detalhes": {
+                "description": "Conteúdo não especificado no contrato humano; exemplo fornecido: null."
+              }
+            }
+          }
+        }
+      },
+      "Saude": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          }
+        }
+      },
+      "Prontidao": {
+        "type": "object",
+        "required": [
+          "status",
+          "dataset_version"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "dataset_version": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Erro404": {
+        "description": "Questão não encontrada ou resolução indisponível.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErroApi"
+            }
+          }
+        }
+      },
+      "Erro422": {
+        "description": "Parâmetro inválido.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErroApi"
+            }
+          }
+        }
+      },
+      "Erro429": {
+        "description": "Limite de requisições excedido.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErroApi"
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "description": "Tempo de espera em segundos ou data HTTP.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Erro500": {
+        "description": "Erro interno.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErroApi"
+            }
+          }
+        }
+      },
+      "Erro503": {
+        "description": "Serviço indisponível.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErroApi"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-pendencias": [
+    "Confirmar tipos e campos obrigatórios com o OpenAPI gerado pelo backend.",
+    "Confirmar omissão versus null para fonte_url; este rascunho permite omissão, mas não null.",
+    "Definir identificação e gabarito/resposta de questões anuladas; não foi inventado campo anulada.",
+    "Confirmar total_paginas quando a lista estiver vazia.",
+    "Definir o formato de erro.detalhes além do exemplo null.",
+    "Conferir quais erros se aplicam a cada operação; o rascunho usa as respostas gerais do contrato nas rotas de questões e metadados."
+  ]
+}
