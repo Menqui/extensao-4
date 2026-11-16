@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-explorador}
+      POSTGRES_USER: ${POSTGRES_USER:-enem}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-enem_local_dev}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ENV: dev
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-enem}:${POSTGRES_PASSWORD:-enem_local_dev}@db:5432/${POSTGRES_DB:-explorador}
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      STATIC_BASE_URL: http://localhost:8001
+      MEDIA_BACKEND: local
+      MEDIA_DIR: /app/data/imagens
+      CACHE_BACKEND: memory
+      DATASET_VERSION: ${DATASET_VERSION:-dev}
+      LOG_LEVEL: INFO
+      AUTO_CREATE_TABLES: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8000"
+    volumes:
+      - ./data/imagens:/app/data/imagens:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/pronto', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

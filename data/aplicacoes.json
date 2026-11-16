@@ -1,0 +1,5 @@
+[
+  {"id": "regular", "nome": "Aplicação regular"},
+  {"id": "reaplicacao", "nome": "Reaplicação"},
+  {"id": "digital", "nome": "Aplicação digital"}
+]
