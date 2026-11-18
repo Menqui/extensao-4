@@ -5,6 +5,9 @@ import {
   Stack,
   Switch,
   Typography,
+  Divider,
+MenuItem,
+TextField,
 } from "@mui/material";
 
 import type { FiltrosDisponiveis } from "../../api/tipos";
@@ -21,6 +24,7 @@ interface PainelFiltrosProps {
   onAlterar: (alteracoes: AtualizacaoFiltros) => void;
   onLimpar: () => void;
   desabilitado?: boolean;
+  carregandoExibicao?: boolean;
 }
 
 export function PainelFiltros({
@@ -29,6 +33,7 @@ export function PainelFiltros({
   onAlterar,
   onLimpar,
   desabilitado = false,
+  carregandoExibicao = false,
 }: PainelFiltrosProps) {
   const assuntosDisponiveis = dados.assuntos.filter(
     (assunto) =>
@@ -49,7 +54,10 @@ export function PainelFiltros({
     filtros.assunto.length > 0 ||
     filtros.aplicacao.length > 0 ||
     filtros.incluir_anuladas;
-
+  
+    const tamanhos = [
+  ...new Set([1, 5, 10, 20, 50, filtros.page_size]),
+].sort((a, b) => a - b);
   return (
     <Paper
       component="section"
@@ -121,7 +129,67 @@ export function PainelFiltros({
           }
           label="Incluir questões anuladas"
         />
+<Divider />
 
+<Typography component="h3" variant="subtitle1">
+  Exibição
+</Typography>
+
+<TextField
+  select
+  fullWidth
+  label="Ordenar por"
+  value={filtros.ordem}
+  disabled={desabilitado || carregandoExibicao}
+  onChange={(evento) => {
+    const ordem = evento.target.value;
+
+    if (
+      ordem === "ano_desc" ||
+      ordem === "ano_asc" ||
+      ordem === "aleatoria"
+    ) {
+      onAlterar({ ordem });
+    }
+  }}
+>
+  <MenuItem value="ano_desc">
+    Ano mais recente
+  </MenuItem>
+
+  <MenuItem value="ano_asc">
+    Ano mais antigo
+  </MenuItem>
+
+  <MenuItem value="aleatoria">
+    Ordem aleatória
+  </MenuItem>
+</TextField>
+
+<TextField
+  select
+  fullWidth
+  label="Questões por página"
+  value={filtros.page_size}
+  disabled={desabilitado || carregandoExibicao}
+  onChange={(evento) => {
+    const tamanho = Number(evento.target.value);
+
+    if (
+      Number.isInteger(tamanho) &&
+      tamanho >= 1 &&
+      tamanho <= 50
+    ) {
+      onAlterar({ page_size: tamanho });
+    }
+  }}
+>
+  {tamanhos.map((tamanho) => (
+    <MenuItem key={tamanho} value={tamanho}>
+      {tamanho}
+    </MenuItem>
+  ))}
+</TextField>
         <Button
           variant="outlined"
           onClick={onLimpar}

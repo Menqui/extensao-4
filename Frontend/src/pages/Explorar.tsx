@@ -14,6 +14,7 @@ import useFiltrosUrl from "../hooks/useFiltrosUrl";
 import useQuestoes from "../hooks/useQuestoes";
 import { EstadoErro } from "../components/estados/EstadoErro";
 import { FiltrosResponsivos } from "../components/filtros/FiltrosResponsivos";
+import { VoltarAoTopo } from "../components/VoltarAoTopo";
 
 export function Explorar() {
   const {
@@ -53,13 +54,19 @@ export function Explorar() {
 
       <Box
         sx={{
-          display: "grid",
+          display: {
+            xs: "flex",
+            md: "grid",
+          },
+          flexDirection: "column",
           gridTemplateColumns: {
-            xs: "minmax(0, 1fr)",
             md: "300px minmax(0, 1fr)",
           },
           gap: 3,
-          alignItems: "start",
+          alignItems: {
+            xs: "stretch",
+            md: "start",
+          },
         }}
       >
         <FiltrosResponsivos>
@@ -73,13 +80,13 @@ export function Explorar() {
             </Box>
           )}
 
-          {consultaQuestoes.isError && (
+          {consultaFiltros.isError && (
             <EstadoErro
-              erro={consultaQuestoes.error}
+              erro={consultaFiltros.error}
               onTentarNovamente={() => {
-                void consultaQuestoes.refetch();
+                void consultaFiltros.refetch();
               }}
-              carregando={consultaQuestoes.isFetching}
+              carregando={consultaFiltros.isFetching}
             />
           )}
 
@@ -89,11 +96,21 @@ export function Explorar() {
               filtros={filtros}
               onAlterar={atualizarFiltros}
               onLimpar={limparFiltros}
+              carregandoExibicao={
+                consultaQuestoes.isFetching ||
+                consultaQuestoes.isPlaceholderData
+              }
             />
           )}
         </FiltrosResponsivos>
 
-        <Box sx={{ minWidth: 0 }}>
+        <Box
+          id="resultados-questoes"
+          sx={{
+            minWidth: 0,
+            scrollMarginTop: 88,
+          }}
+        >
           {consultaQuestoes.isPending && (
             <Stack
               spacing={2}
@@ -116,13 +133,13 @@ export function Explorar() {
             </Stack>
           )}
 
-          {consultaFiltros.isError && (
+          {consultaQuestoes.isError && (
             <EstadoErro
-              erro={consultaFiltros.error}
+              erro={consultaQuestoes.error}
               onTentarNovamente={() => {
-                void consultaFiltros.refetch();
+                void consultaQuestoes.refetch();
               }}
-              carregando={consultaFiltros.isFetching}
+              carregando={consultaQuestoes.isFetching}
             />
           )}
 
@@ -140,24 +157,11 @@ export function Explorar() {
                     ? "1 questão encontrada"
                     : `${consultaQuestoes.data.total} questões encontradas`}
               </Typography>
-
-              <ControlesLista
-                filtros={filtros}
-                totalPaginas={consultaQuestoes.data.total_paginas}
-                onAlterar={atualizarFiltros}
-                onMudarPagina={mudarPagina}
-                carregando={
-                  consultaQuestoes.isFetching ||
-                  consultaQuestoes.isPlaceholderData
-                }
-              />
-
               <Box sx={{ minHeight: 4 }}>
                 {consultaQuestoes.isFetching && (
                   <LinearProgress aria-label="Atualizando questões" />
                 )}
               </Box>
-
               <Box
                 inert={consultaQuestoes.isPlaceholderData}
                 aria-busy={consultaQuestoes.isFetching}
@@ -177,10 +181,29 @@ export function Explorar() {
                   />
                 )}
               </Box>
+              <ControlesLista
+                filtros={filtros}
+                totalPaginas={consultaQuestoes.data.total_paginas}
+                onMudarPagina={(pagina) => {
+                  mudarPagina(pagina);
+
+                  document
+                    .getElementById("resultados-questoes")
+                    ?.scrollIntoView({
+                      block: "start",
+                      behavior: "instant",
+                    });
+                }}
+                carregando={
+                  consultaQuestoes.isFetching ||
+                  consultaQuestoes.isPlaceholderData
+                }
+              />
             </Stack>
           )}
         </Box>
       </Box>
+      <VoltarAoTopo />
     </Stack>
   );
 }

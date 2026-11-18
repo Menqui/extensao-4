@@ -19,17 +19,5 @@ export default defineConfig({
       VITE_API_BASE_URL: "http://localhost:5173/api/v1",
       VITE_USE_MOCK: "false",
     },
-    server: {
-      proxy: {
-        "/api/v1": {
-          target: "http://127.0.0.1:8001",
-          changeOrigin: true,
-        },
-        "/static": {
-          target: "http://127.0.0.1:8001",
-          changeOrigin: true,
-        },
-      },
-    },
   },
 });

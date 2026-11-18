@@ -8,7 +8,12 @@ import { Link, NavLink } from "react-router-dom";
 
 export default function Cabecalho() {
   return (
-    <AppBar component="header" position="static" elevation={0}>
+    <AppBar
+      component="header"
+      position="static"
+      color="primary"
+      elevation={0}
+    >
       <Container maxWidth="lg">
         <Toolbar
           disableGutters
@@ -52,6 +57,8 @@ export default function Cabecalho() {
               sx={{
                 "&.active": {
                   textDecoration: "underline",
+                  textDecorationColor: "#FACC15",
+                  textDecorationThickness: "2px",
                   textUnderlineOffset: "6px",
                 },
               }}
@@ -66,6 +73,8 @@ export default function Cabecalho() {
               sx={{
                 "&.active": {
                   textDecoration: "underline",
+                  textDecorationColor: "#FACC15",
+                  textDecorationThickness: "2px",
                   textUnderlineOffset: "6px",
                 },
               }}

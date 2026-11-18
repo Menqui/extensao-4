@@ -54,7 +54,14 @@ export function FiltrosResponsivos({
       <Box
         component="aside"
         aria-label="Filtros de questões"
-        sx={{ minWidth: 0 }}
+        sx={{
+          minWidth: 0,
+          position: "sticky",
+          top: 72,
+          alignSelf: "start",
+          maxHeight: "calc(100dvh - 88px)",
+          overflowY: "auto",
+        }}
       >
         {children}
       </Box>
@@ -62,7 +69,19 @@ export function FiltrosResponsivos({
   }
 
   return (
-    <Box sx={{ minWidth: 0 }}>
+     <Box
+    sx={{
+      minWidth: 0,
+      width: "100%",
+      position: "sticky",
+      top: 0,
+      zIndex: (tema) => tema.zIndex.appBar - 1,
+      bgcolor: "background.default",
+      py: 1,
+      borderBottom: 1,
+      borderColor: "divider",
+    }}
+  >
       <Button
         variant="outlined"
         startIcon={<FilterListIcon />}

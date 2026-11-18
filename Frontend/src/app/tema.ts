@@ -1,23 +1,50 @@
 import { createTheme } from "@mui/material/styles";
 
 const tema = createTheme({
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#1565C0",
-    },
-    secondary: {
-      main: "#00695C",
-    },
-    background: {
-      default: "#F5F7FA",
-      paper: "#FFFFFF",
-    },
-    text: {
-      primary: "#172B4D",
-      secondary: "#526078",
-    },
+ palette: {
+  mode: "light",
+
+  primary: {
+    main: "#166534",
+    dark: "#14532D",
+    contrastText: "#FFFFFF",
   },
+
+  secondary: {
+    main: "#1D4ED8",
+    dark: "#1E40AF",
+    contrastText: "#FFFFFF",
+  },
+
+  background: {
+    default: "#F4F7F5",
+    paper: "#FFFFFF",
+  },
+
+  text: {
+    primary: "#17342A",
+    secondary: "#52645B",
+  },
+
+  success: {
+    main: "#15803D",
+    dark: "#166534",
+    contrastText: "#FFFFFF",
+  },
+
+  error: {
+    main: "#B91C1C",
+    dark: "#991B1B",
+    contrastText: "#FFFFFF",
+  },
+
+  info: {
+    main: "#1D4ED8",
+    contrastText: "#FFFFFF",
+  },
+
+  divider: "#D8E3DC",
+},
 
   typography: {
     fontFamily: 'Arial, Helvetica, sans-serif',
@@ -44,17 +71,36 @@ const tema = createTheme({
   },
 
   components: {
-    MuiButton: {
-      defaultProps: {
-        disableElevation: true,
-      },
-      styleOverrides: {
-        root: {
-          minHeight: 44,
-        },
+  MuiButton: {
+    defaultProps: {
+      disableElevation: true,
+    },
+    styleOverrides: {
+      root: {
+        minHeight: 44,
       },
     },
   },
+
+  MuiAppBar: {
+    defaultProps: {
+      color: "primary",
+      elevation: 0,
+    },
+    styleOverrides: {
+      root: {
+        borderBottom: "3px solid #FACC15",
+      },
+    },
+  },
+
+  MuiLink: {
+    defaultProps: {
+      color: "secondary",
+      underline: "hover",
+    },
+  },
+},
 });
 
 export default tema;

@@ -3,11 +3,19 @@ import type { components, operations } from "./tipos-gerados";
 export type FiltrosDisponiveis =
   components["schemas"]["FiltrosDisponiveis"];
 
-export type Questao =
-  components["schemas"]["Questao"];
+export type Questao = Omit<
+  components["schemas"]["Questao"],
+  "fonte_url"
+> & {
+  fonte_url?: string | null;
+};
 
-export type ListaQuestoes =
-  components["schemas"]["ListaQuestoes"];
+export type ListaQuestoes = Omit<
+  components["schemas"]["ListaQuestoes"],
+  "itens"
+> & {
+  itens: Questao[];
+};
 
 export type MidiaQuestao =
   components["schemas"]["MidiaQuestao"];

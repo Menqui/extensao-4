@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
-
+import { alpha } from "@mui/material/styles";
 import type {
   Alternativa as LetraAlternativa,
   MidiaQuestao as TipoMidiaQuestao,
@@ -34,14 +34,18 @@ export default function Alternativa({
 
   const idRotulo = `${idRadio}-rotulo`;
 
-  const corBorda =
+  const corEstado =
     estado === "correta"
-      ? "success.main"
+      ? "success"
       : estado === "incorreta"
-        ? "error.main"
+        ? "error"
         : selecionada
-          ? "primary.main"
-          : "divider";
+          ? "secondary"
+          : null;
+
+  const corBorda = corEstado
+    ? `${corEstado}.main`
+    : "divider";
 
   return (
     <Box
@@ -53,13 +57,14 @@ export default function Alternativa({
         border: 2,
         borderColor: corBorda,
         borderRadius: 2,
-        bgcolor: selecionada
-          ? "action.selected"
-          : "background.paper",
+        bgcolor: (tema) =>
+          corEstado
+            ? alpha(tema.palette[corEstado].main, 0.08)
+            : tema.palette.background.paper,
 
         "&:focus-within": {
           outline: "2px solid",
-          outlineColor: "primary.main",
+          outlineColor: "secondary.main",
           outlineOffset: 2,
         },
       }}
@@ -68,6 +73,7 @@ export default function Alternativa({
         value={letra}
         checked={selecionada}
         disabled={desabilitada}
+        color={corEstado ?? "secondary"}
         slotProps={{
           input: {
             id: idRadio,
@@ -78,6 +84,12 @@ export default function Alternativa({
           minWidth: 44,
           minHeight: 44,
           flexShrink: 0,
+
+          "&.Mui-disabled": {
+            color: corEstado
+              ? `${corEstado}.main`
+              : undefined,
+          },
         }}
       />
 
