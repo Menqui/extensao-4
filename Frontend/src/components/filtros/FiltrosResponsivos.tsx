@@ -69,21 +69,19 @@ export function FiltrosResponsivos({
   }
 
   return (
-     <Box
-    sx={{
-      minWidth: 0,
-      width: "100%",
-      position: "sticky",
-      top: 0,
-      zIndex: (tema) => tema.zIndex.appBar - 1,
-      bgcolor: "background.default",
-      py: 1,
-      borderBottom: 1,
-      borderColor: "divider",
-    }}
-  >
+    <Box
+      sx={{
+        minWidth: 0,
+        width: "100%",
+        position: "sticky",
+        top: 0,
+        zIndex: (tema) => tema.zIndex.appBar - 1,
+        bgcolor: "primary",
+        py: 1,
+      }}
+    >
       <Button
-        variant="outlined"
+        variant="contained"
         startIcon={<FilterListIcon />}
         onClick={() => setAberto(true)}
         aria-haspopup="dialog"

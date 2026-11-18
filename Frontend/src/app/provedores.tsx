@@ -8,7 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-
+import AvisoAtualizacao from "../components/pwa/AvisoAtualizacao";
 import tema from "./tema";
 
 const clienteConsulta = new QueryClient();
@@ -56,6 +56,7 @@ export default function Provedores({ children }: ProvedoresProps) {
           }}
         />
         {children}
+        <AvisoAtualizacao />
       </ThemeProvider>
     </QueryClientProvider>
   );

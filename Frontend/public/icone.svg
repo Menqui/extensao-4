@@ -1,0 +1,38 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+>
+  <rect width="512" height="512" fill="#166534" />
+
+  <path
+    d="
+      M144 176
+      H224 Q244 176 256 188
+      Q268 176 288 176 H368
+      V336 H288 Q268 336 256 348
+      Q244 336 224 336 H144 Z
+    "
+    fill="#FFFFFF"
+  />
+
+  <path
+    d="M256 188 V348"
+    stroke="#166534"
+    stroke-width="12"
+  />
+
+  <path
+    d="
+      M174 216 H220
+      M174 248 H220
+      M292 216 H338
+      M292 248 H338
+    "
+    fill="none"
+    stroke="#FACC15"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+</svg>
